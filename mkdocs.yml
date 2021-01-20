@@ -1,0 +1,26 @@
+site_name: CRUD lambda API
+theme:
+  name: "material"
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          setup_commands:
+            - import sys
+            - sys.path.append("src")
+            - sys.path.append("infra")
+
+nav:
+    - Home: index.md
+    - API: api.md
+    - Layer: layers.md
+    - Infra: stacks.md
+    - Config: dotenv.md
+    - MakeFile: makefile.md
+    - Reference:
+      - Models: refs/models.md
+      - API: refs/api.md
+      - CDK Infra: refs/infra.md
+      - CDK App: refs/app.md
