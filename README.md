@@ -1,17 +1,42 @@
 
-# Welcome to your CDK Python project!
+#  CRUD Lambda API 
 
-This is a blank project for Python development with CDK.
+This is a example project for serverless Python based API deployed with CDK.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+It uses lambdas for integration with http api gateway, lambda layers to manage dependencies, dynamodb for persistence, dynamodb streams to generate change events, and cdk to deploy the infrastructure. The lambdas utilize AWS lambda powertools library for a micro-framework. Included is the standard mkdocs static docs generator along with mkdocstrings plugin to generate documentation from the source files. 
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+## Makefile setup and deployment instructions
 
+You can use the included makefile to quickly setup the environment, test and deploy the environment.  
+You will need to have a .env file created in the root of this project, see [.env](/docs/dotenv.md) for details.  
+Additionally, you will need to have the make system installed on your workstation.   
+  
+To build the virtual environment and install the dependencies as well as build the layer zip file for deployment:
+```
+$ make deps
+```
+After the init process completes and the virtualenv is created, you can use the following
+step to activate your virtualenv.
+
+```
+$ source .venv/bin/activate
+```
+
+At this point you can now test the code and synthesize the CloudFormation template for this code.
+
+```
+$ make synth
+```
+
+And finally, manually deploy
+
+```
+$ make deploy
+```
+
+For documentation of the full set of makefile targets included see: [Makefile](/docs/makefile.md).
+
+## Standard CDK setup Instructions
 To manually create a virtualenv on MacOS and Linux:
 
 ```

@@ -1,4 +1,4 @@
-site_name: CRUD lambda API
+site_name: Basic CRUD lambda API
 theme:
   name: "material"
 

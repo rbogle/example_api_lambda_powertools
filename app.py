@@ -8,8 +8,11 @@ from infra.infra_stack import InfraStack
 load_dotenv()
 
 stack_name = os.getenv("STACK_NAME")
+account=os.getenv("DEPLOY_ACCOUNT")
+region=os.getenv("DEPLOY_REGION")
+env = core.Environment(account=account, region=region)
 
 app = core.App()
-InfraStack(app, stack_name)
+InfraStack(app, stack_name, env=env)
 
 app.synth()
