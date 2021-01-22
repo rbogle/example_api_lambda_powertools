@@ -15,7 +15,7 @@ logger = Logger(service="model-events", level=log_level)
 
 eventbridge = None
 
-#decorator logs context info and the full event ( default event logging is false)
+#decorator logs context info and the full event as json ( default event logging is false)
 @logger.inject_lambda_context(log_event=True)
 def dynamo_handler(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
     global eventbridge
@@ -24,7 +24,7 @@ def dynamo_handler(event: Dict[str, Any], context: LambdaContext) -> Dict[str, A
 
     response = Response()
     event: DynamoDBStreamEvent = DynamoDBStreamEvent(event)
-    logger.info(f"Event Recived: {event}")
+    logger.info(f"DynamodbStreamEvent Received: {event}")
     for record in event.records:
         event: ModelChangeEvent = None
         if record.event_name == DynamoDBRecordEventName.INSERT:

@@ -23,3 +23,5 @@ def test_dump_change_event():
     dump = me.dump()
     assert isinstance(dump['detail'], str)
 
+def test_dynamo_handler():
+    pass
