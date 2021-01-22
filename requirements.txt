@@ -7,6 +7,9 @@ python-dotenv
 aws-lambda-powertools[pydantic]
 aws-cdk.core
 aws-cdk.aws-lambda
+aws-cdk.aws-lambda-event-sources
+aws-cdk.aws-events
+aws-cdk.aws-events-targets
 aws-cdk.aws-dynamodb
 aws-cdk.aws-apigatewayv2
 aws-cdk.aws-apigatewayv2-integrations

@@ -1,7 +1,8 @@
 from copy import Error
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.parser import BaseModel, Field, validator
-from pydantic.json import pydantic_encoder
+from aws_lambda_powertools.utilities.parser import models
+from aws_lambda_powertools.utilities.data_classes.dynamo_db_stream_event import DynamoDBRecord
 import boto3
 from boto3.dynamodb.conditions import Attr
 from botocore.exceptions import ClientError
@@ -9,7 +10,7 @@ from uuid import UUID, uuid4
 from typing import List,Dict
 
 class Model(BaseModel):
-    """ This class is the model for our Model object 
+    """ This class is the model of our API domain object 
 
     Attributes:
         guid (str): a generated uuid4 string
@@ -40,12 +41,15 @@ class Model(BaseModel):
         return str(vg)
 
 class ModelError(BaseModel):
-    ''' Class for IETF error schema
-        type — A URI identifier that categorizes the error
-        title — A brief, human-readable message about the error
-        status — The HTTP response code (optional)
-        detail — A human-readable explanation of the error
-        instance — A URI that identifies the specific occurrence of the error
+    ''' Class for IETF RFC error schema,
+        we use this to return errors in the response
+        
+        Attributes:
+            type (str): A URI identifier that categorizes the error
+            title (str): A brief, human-readable message about the error
+            status (str): The HTTP response code (optional)
+            detail (str): A human-readable explanation of the error
+            instance (str): A URI that identifies the specific occurrence of the error
     '''
     type: str = ""
     title: str = ""
@@ -53,21 +57,27 @@ class ModelError(BaseModel):
     detail: str = ""
     instance: str = ""
 
-
 class ResponseBody(BaseModel):
-    '''
-        Class for body of response, always contains
-        errors: list of ModelErrors encounterd
-        models: list of models returned
+    '''Class for body of http response payload
+    
+        Attributes:
+            errors (list): of ModelErrors encounterd
+            models (list): of models returned
     '''
     errors: List[ModelError] = Field(default_factory=list)
     models: List[Model] = Field(default_factory=list)
 
 class Response(BaseModel):
-    '''
-        Response encapsulates a full response payload
+    ''' Response encapsulates a full response payload
         from a lambda call for v2 of the payload format
         The body of the payload is a ResponseBody object
+
+        Attributes:
+            statusCode (int): http response code
+            headers (dict): dictionary of http headers, defaults with 'Content-Type': 'application/json'
+            isBase64Encoded: (bool): default is false
+            cookies (list): list http cookies
+            body (ResponseBody): makes up the body of the response
     '''
     statusCode: int = 200
     headers: dict = {"Content-Type": "application/json"}
@@ -214,4 +224,45 @@ class ModelStore():
             if attr:
                 model = Model(**attr)
                 response.add_model(model)
-        return response      
+        return response
+
+class ModelEventDetail(BaseModel):
+    model_id: str
+    event_type: str
+    old_model: Model
+    new_model: Model
+
+
+class ModelChangeEvent(BaseModel):
+    detail_type: str
+    detail: ModelEventDetail
+   
+    def send(self, eventbridge: boto3.client) -> Response:
+        pass
+
+    def dump(self) -> Dict:
+        '''
+            This creates a properly formatted response dictionary to return
+            from a lambda handler call
+        '''
+        me = self.dict(exclude={'detail'})
+        me['detail']=''
+        if self.detail is not None:
+            me['detail'] = self.detail.json()
+        return me
+
+    @classmethod
+    def from_dynamodb_record(cls, event_type: str, record: DynamoDBRecord):
+        old_model = Model(**record.dynamodb.new_image)
+        new_model = Model(**record.dynamodb.old_image)        
+        evtd = ModelEventDetail(
+            event_type = event_type,
+            old_model = old_model,
+            new_model = new_model,
+            model_id = new_model.guid
+        )
+        evt = cls(
+            detail_type = "model.change.event",
+            detail = evtd
+        )
+        return evt  

@@ -1,8 +1,12 @@
 from aws_cdk import core
 from aws_cdk import aws_dynamodb as ddb
 from aws_cdk import aws_lambda
+from aws_cdk import aws_lambda_event_sources
+from aws_cdk import aws_events
+from aws_cdk import aws_events_targets
 from aws_cdk import aws_apigatewayv2 as apigw2
 from aws_cdk import aws_apigatewayv2_integrations as apigw2_int
+from aws_cdk import aws_iam
 import os
 
 
@@ -31,7 +35,8 @@ class InfraStack(core.Stack):
             partition_key=ddb.Attribute(
                 name='guid', 
                 type=ddb.AttributeType.STRING
-            )
+            ),
+            stream=ddb.StreamViewType.NEW_AND_OLD_IMAGES
         )
 
         # create a layer for the lambda required imports
@@ -55,6 +60,33 @@ class InfraStack(core.Stack):
                 "DDB_TABLE_NAME":ddb_table.table_name
             }
         )
+        # create lambda to translate db-stream events to domain events
+        evt_lambda = aws_lambda.Function(
+            self, 
+            f"{stack_name}-evt-fn",
+            runtime=aws_lambda.Runtime.PYTHON_3_8,
+            handler="events.dynamo_handler",
+            code=aws_lambda.Code.from_asset("src"),
+            timeout=core.Duration.seconds(30),
+            layers=[fn_layer],
+            environment = {
+                "DDB_TABLE_NAME":ddb_table.table_name
+            }
+        )
+
+        # create dynamo stream event source for evt_lambda
+        ddb_evt_source = aws_lambda_event_sources.DynamoEventSource(
+            ddb_table,
+            starting_position=aws_lambda.StartingPosition.TRIM_HORIZON,
+            batch_size=5,
+            bisect_batch_on_error=True,
+            retry_attempts=5
+        )
+        evt_lambda.add_event_source(ddb_evt_source)
+
+        # add eventbridge permissions for evt_lambda to generate custom events
+        event_policy = aws_iam.PolicyStatement(effect=aws_iam.Effect.ALLOW, resources=['*'], actions=['events:PutEvents'])
+        evt_lambda.add_to_role_policy(event_policy)
 
         # create http api-gw
         http_api = apigw2.HttpApi(
