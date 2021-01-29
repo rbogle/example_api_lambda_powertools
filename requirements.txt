@@ -4,10 +4,12 @@ moto
 mkdocs-material
 mkdocstrings
 python-dotenv
+dynamodb-json
 aws-lambda-powertools[pydantic]
 aws-cdk.core
 aws-cdk.aws-lambda
 aws-cdk.aws-lambda-event-sources
+aws-cdk.aws-logs
 aws-cdk.aws-events
 aws-cdk.aws-events-targets
 aws-cdk.aws-dynamodb

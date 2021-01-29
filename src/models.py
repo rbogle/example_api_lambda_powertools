@@ -1,13 +1,14 @@
-from copy import Error
-from aws_lambda_powertools import Logger
-from aws_lambda_powertools.utilities.parser import BaseModel, Field, validator
-from aws_lambda_powertools.utilities.parser import models
-from aws_lambda_powertools.utilities.data_classes.dynamo_db_stream_event import DynamoDBRecord
+from datetime import datetime
+from uuid import UUID, uuid4
+from typing import List,Dict, Optional
 import boto3
 from boto3.dynamodb.conditions import Attr
 from botocore.exceptions import ClientError
-from uuid import UUID, uuid4
-from typing import List,Dict
+from dynamodb_json import json_util 
+from aws_lambda_powertools import Logger
+from aws_lambda_powertools.utilities.parser import BaseModel, Field, validator
+from aws_lambda_powertools.utilities.parser.models import DynamoDBStreamRecordModel, DynamoDBStreamChangedRecordModel
+
 
 class Model(BaseModel):
     """ This class is the model of our API domain object 
@@ -39,6 +40,13 @@ class Model(BaseModel):
         except ValueError as e:
             vg = uuid4()
         return str(vg)
+            
+    @classmethod
+    def from_dbstream_image(cls, db_json: Dict):
+        data = json_util.loads(db_json)
+        return cls(**data)
+         
+
 
 class ModelError(BaseModel):
     ''' Class for IETF RFC error schema,
@@ -59,7 +67,7 @@ class ModelError(BaseModel):
 
 class ResponseBody(BaseModel):
     '''Class for body of http response payload
-    
+
         Attributes:
             errors (list): of ModelErrors encounterd
             models (list): of models returned
@@ -227,42 +235,54 @@ class ModelStore():
         return response
 
 class ModelEventDetail(BaseModel):
-    model_id: str
-    event_type: str
-    old_model: Model
-    new_model: Model
+    model_id: str = ""
+    event_type: str = ""
+    old_model: Optional[Model] = None
+    new_model: Optional[Model] = None
 
 
 class ModelChangeEvent(BaseModel):
-    detail_type: str
-    detail: ModelEventDetail
+    Source: str = "model.api.event"
+    EventBusName: Optional[str] = None
+    Resources: Optional[List[str]] = None
+    DetailType: str
+    Detail: ModelEventDetail
    
-    def send(self, eventbridge: boto3.client) -> Response:
-        pass
+    def send(self, eventbridge: boto3.client):
+        result = eventbridge.put_events(Entries=[self.dump()])
 
     def dump(self) -> Dict:
         '''
             This creates a properly formatted response dictionary to return
             from a lambda handler call
         '''
-        me = self.dict(exclude={'detail'})
-        me['detail']=''
-        if self.detail is not None:
-            me['detail'] = self.detail.json()
+        me = self.dict(exclude={'Detail'})
+        me['Detail']=''
+        if self.Detail is not None:
+            me['Detail'] = self.Detail.json()
         return me
 
     @classmethod
-    def from_dynamodb_record(cls, event_type: str, record: DynamoDBRecord):
-        old_model = Model(**record.dynamodb.new_image)
-        new_model = Model(**record.dynamodb.old_image)        
+    def from_dynamodb_record(cls, event_type: str, record: DynamoDBStreamRecordModel):
+        old_model = None
+        new_model = None
+
+        if record.dynamodb.OldImage is not None:
+            old_model = Model.from_dbstream_image(record.dynamodb.OldImage)
+    
+        if record.dynamodb.NewImage is not None:
+            new_model = Model.from_dbstream_image(record.dynamodb.NewImage)
+
+        model_id = json_util.loads(record.dynamodb.Keys)['guid']
+
         evtd = ModelEventDetail(
             event_type = event_type,
             old_model = old_model,
             new_model = new_model,
-            model_id = new_model.guid
+            model_id = model_id
         )
         evt = cls(
-            detail_type = "model.change.event",
-            detail = evtd
+            DetailType = "model.change",
+            Detail = evtd
         )
         return evt  

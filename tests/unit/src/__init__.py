@@ -122,3 +122,34 @@ def api_gateway_event_v2(payload: dict, path: str="", method: str="") -> dict:
             "stageVariable2": "value2"
         }
     }
+
+def get_dynamodb_stream_event():
+    return {"Records": [
+    {
+      "eventID": "1",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "Keys": {
+          "guid": {
+            "S": "60a5de7e-17ea-411e-b092-0652646f9d3a"
+          }
+        },
+        "NewImage": {
+          "name": {
+            "S": "jill"
+          },
+          "guid": {
+            "S": "60a5de7e-17ea-411e-b092-0652646f9d3a"
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "SequenceNumber": "111",
+        "SizeBytes": 26
+      },
+      "awsRegion": "us-east-1",
+      "eventName": "INSERT",
+      "eventSourceARN": "arn:aws:dynamodb:us-east-1:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+      "eventSource": "aws:dynamodb"
+    }
+  ]
+}
