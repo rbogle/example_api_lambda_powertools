@@ -31,7 +31,7 @@ def router(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
     request_context = event.request_context
     query_string_parameters = event.query_string_parameters
     # regex to match a proper uuid4 str 
-    uuid4val = re.compile('[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}\Z', re.I)
+    uuid4val = re.compile(r'[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}\Z', re.I)
     response = Response()
     if 'models' in event.raw_path:
         logger.info(event.body)
@@ -45,7 +45,7 @@ def router(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
                 body = json.loads(base64.b64decode(event.body))
             else:
                 body = json.loads(event.body)
-                
+
         # need to catch empty guid for get all, but also create new Model with new guid when post
         has_guid = bool(body.get('guid', None))
         # use powertools to parse event.body into a Model

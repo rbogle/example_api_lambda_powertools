@@ -25,7 +25,7 @@ $ source .venv/bin/activate
 At this point you can now test the code and synthesize the CloudFormation template for this code.
 
 ```
-$ make synth
+$ make test
 ```
 
 And finally, manually deploy

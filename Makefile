@@ -25,10 +25,10 @@ venv: clean-venv build-venv pip-venv ## -- rebuild venv from scratch
 layer: clean-layer pip-layer zip-layer ## -- build clean layer zip
 .PHONY: layer
 
-synth: test-src test-cdk ## -- runs tests on lambda src and cdk stacks
-.PHONY: synth
+test: test-src test-cdk ## -- runs tests on lambda src and cdk stacks
+.PHONY: test
 
-deploy: synth
+deploy: test
 	@ echo "deploying stack"
 	@ source .venv/bin/activate; cdk deploy 
 
