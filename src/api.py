@@ -35,16 +35,17 @@ def router(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
     response = Response()
     if 'models' in event.raw_path:
         logger.info(event.body)
-        if event.body is None:
+        if event.body is None: # should happen with a get so we check for an Id in path
             body = dict()
             guid = os.path.basename(event.raw_path)
             if uuid4val.match(guid) is not None:
                 body['guid'] = guid
         else:
-            if event.is_base64_encoded:
+            if event.is_base64_encoded: # get with a body passed in is encoded
                 body = json.loads(base64.b64decode(event.body))
             else:
                 body = json.loads(event.body)
+                
         # need to catch empty guid for get all, but also create new Model with new guid when post
         has_guid = bool(body.get('guid', None))
         # use powertools to parse event.body into a Model
