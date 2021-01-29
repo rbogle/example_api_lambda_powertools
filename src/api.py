@@ -66,6 +66,13 @@ def router(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
         # DELETE remove
         elif request_context.http.method == 'DELETE':
             response = model_store.delete(model, query_string_parameters)
+        else:
+            err = ModelError(
+                status=400,
+                title="wrong Operation requested",
+                details=f"the operations requested {request_context.http.method} is not supported"
+            )
+            response.add_model_error(err)
     else:
         err = ModelError(
             status=400,
