@@ -1,6 +1,8 @@
 
 import os
 import json
+import base64
+import re
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.data_classes import APIGatewayProxyEventV2
 from aws_lambda_powertools.utilities.parser import parse
@@ -28,12 +30,21 @@ def router(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
     event: APIGatewayProxyEventV2 = APIGatewayProxyEventV2(event)
     request_context = event.request_context
     query_string_parameters = event.query_string_parameters
+    # regex to match a proper uuid4 str 
+    uuid4val = re.compile('[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}\Z', re.I)
     response = Response()
     if 'models' in event.raw_path:
+        logger.info(event.body)
         if event.body is None:
             body = dict()
+            guid = os.path.basename(event.raw_path)
+            if uuid4val.match(guid) is not None:
+                body['guid'] = guid
         else:
-            body = json.loads(event.body)
+            if event.is_base64_encoded:
+                body = json.loads(base64.b64decode(event.body))
+            else:
+                body = json.loads(event.body)
         # need to catch empty guid for get all, but also create new Model with new guid when post
         has_guid = bool(body.get('guid', None))
         # use powertools to parse event.body into a Model
