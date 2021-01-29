@@ -51,19 +51,19 @@ def router(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
         # use powertools to parse event.body into a Model
         model: Model = parse(event=body, model=Model)
         
-        # POST
+        # POST create new not idempotent
         if request_context.http.method == 'POST':
             response = model_store.post(model, query_string_parameters)
-        # GET
+        # GET one or all
         elif request_context.http.method == 'GET':
             if has_guid: # looking for one model
                 response = model_store.get(model, query_string_parameters)
             else: # want all the models
                 response = model_store.get_all(query_string_parameters)
-        # PUT
-        elif request_context.http.method == 'PUT':
-            response = model_store.put(model, query_string_parameters)
-        # DELETE
+        # PATCH update a known 
+        elif request_context.http.method == 'PATCH':
+            response = model_store.patch(model, query_string_parameters)
+        # DELETE remove
         elif request_context.http.method == 'DELETE':
             response = model_store.delete(model, query_string_parameters)
     else:

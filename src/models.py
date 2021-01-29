@@ -195,7 +195,7 @@ class ModelStore():
         response.add_models(models)
         return response
     
-    def put(self, model: Model, query_params: dict) -> Response:
+    def patch(self, model: Model, query_params: dict) -> Response:
         response = Response()
         item=model.dict(exclude_defaults=True)
         try:

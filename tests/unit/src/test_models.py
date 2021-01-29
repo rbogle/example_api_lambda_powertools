@@ -71,24 +71,24 @@ def test_model_store_post_exist(models_store):
     assert response.statusCode == 200
     assert len(response.body.models) == 5
 
-def test_model_store_put_known(models_store):
+def test_model_store_patch_known(models_store):
     data = get_mock_model(1)
     model = Model(**data)
     guid = model.guid
     model.name = "louise"
-    response: Response = models_store.put(model, None)
+    response: Response = models_store.patch(model, None)
     assert response.statusCode == 200
     assert len(response.body.models) == 2
     assert response.body.models[0].guid == response.body.models[1].guid 
     assert response.body.models[0].name != response.body.models[1].name    
 
-def test_model_store_put_unknown(models_store):
+def test_model_store_patch_unknown(models_store):
     model = Model(
         guid= '00000000-0000-0000-0000-000000000000',
         name="bill",
         metadata={'foo': 'apple'}
     )
-    response: Response = models_store.put(model, None)
+    response: Response = models_store.patch(model, None)
     assert response.statusCode == 400
     assert len(response.body.models) == 0
     assert len(response.body.errors) == 1

@@ -42,12 +42,12 @@ def test_api_handler_get_all(models_store, lambda_context):
     assert len(body['errors']) == 0
     assert len(body['models']) == 3
 
-def test_api_handler_put_known(models_store, lambda_context):
+def test_api_handler_patch_known(models_store, lambda_context):
     from src import api
     api.model_store = models_store
     model = get_mock_model()
     model['name'] = "martha dandridge"
-    event = api_gateway_event_v2(payload=model, path="models", method="PUT")
+    event = api_gateway_event_v2(payload=model, path="models", method="PATCH")
     response = api.router(event, lambda_context)
     assert isinstance(response, dict)
     assert 'body' in response
@@ -59,11 +59,11 @@ def test_api_handler_put_known(models_store, lambda_context):
     print (f"old: {old_name} vs new: {new_name}")
     assert  old_name != new_name
 
-def test_api_handler_put_unknown(models_store, lambda_context):
+def test_api_handler_patch_unknown(models_store, lambda_context):
     from src import api
     api.model_store = models_store
     model = get_mock_model_unknown()
-    event = api_gateway_event_v2(payload=model, path="models", method="PUT")
+    event = api_gateway_event_v2(payload=model, path="models", method="PATCH")
     response = api.router(event, lambda_context)
     assert isinstance(response, dict)
     assert 'body' in response

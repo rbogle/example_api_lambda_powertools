@@ -34,7 +34,7 @@ deploy: test
 
 test-src: ## -- runs pytest and cdk synth
 	@ echo "running tests with coverage"
-	@ source .venv/bin/activate; pytest -rP --cov=src 
+	@ source .venv/bin/activate; pytest -rP --cov=src ./tests
 
 test-cdk: ## -- executes cdk synth
 	@ echo "doing cdk synth"
