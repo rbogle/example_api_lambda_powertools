@@ -70,14 +70,14 @@ def router(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
             err = ModelError(
                 status=400,
                 title="wrong Operation requested",
-                details=f"the operations requested {request_context.http.method} is not supported"
+                detail=f"the operations requested: {request_context.http.method} is not supported"
             )
             response.add_model_error(err)
     else:
         err = ModelError(
             status=400,
             title="wrong path endpoint requested",
-            details=f"the path requested {event.raw_path} does not contain 'models'"
+            detail=f"the path requested {event.raw_path} does not contain 'models'"
         )
         response.add_model_error(err)
     return response.dump()
