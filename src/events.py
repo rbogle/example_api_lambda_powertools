@@ -1,3 +1,4 @@
+from logging import log
 import os
 from typing import Any, Dict, List
 from aws_lambda_powertools import Logger
@@ -33,7 +34,8 @@ def dynamo_handler(in_event: Dict[str, Any], context: LambdaContext) -> Dict[str
         elif record.eventName == 'REMOVE':
             out_event=ModelChangeEvent.from_dynamodb_record("DELETE", record)
         try:
-            out_event.send(eventbridge)
+            logger.info(out_event)
+            result = out_event.send(eventbridge)
         except ClientError as ce:
             response.add_boto_error(ce)
             logger.error(ce)
@@ -45,4 +47,6 @@ def dynamo_handler(in_event: Dict[str, Any], context: LambdaContext) -> Dict[str
             )
             response.add_model_error(me)
             logger.error(ae)
+        else:
+            logger.info(result)
     return response.dump()

@@ -242,7 +242,7 @@ class ModelEventDetail(BaseModel):
 
 
 class ModelChangeEvent(BaseModel):
-    Source: str = "model.api.event"
+    Source: str = None
     EventBusName: Optional[str] = None
     Resources: Optional[List[str]] = None
     DetailType: str
@@ -250,13 +250,14 @@ class ModelChangeEvent(BaseModel):
    
     def send(self, eventbridge: boto3.client):
         result = eventbridge.put_events(Entries=[self.dump()])
+        return result
 
     def dump(self) -> Dict:
         '''
             This creates a properly formatted response dictionary to return
             from a lambda handler call
         '''
-        me = self.dict(exclude={'Detail'})
+        me = self.dict(exclude={'Detail'}, exclude_unset=True)
         me['Detail']=''
         if self.Detail is not None:
             me['Detail'] = self.Detail.json()
@@ -282,7 +283,8 @@ class ModelChangeEvent(BaseModel):
             model_id = model_id
         )
         evt = cls(
-            DetailType = "model.change",
+            Source ="model.api.events",
+            DetailType = f"model.change.{event_type.lower()}",
             Detail = evtd
         )
         return evt  
