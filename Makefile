@@ -9,7 +9,7 @@ endif
 .PHONY: list
 
 
-list: 
+list: ## -- list all the targets in this file with a description
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' Makefile \
 	| sed -n 's/^\(.*\): \(.*\)##\(.*\)/\1\3/p' 
 
@@ -28,7 +28,7 @@ layer: clean-layer pip-layer zip-layer ## -- build clean layer zip
 test: test-src test-cdk ## -- runs tests on lambda src and cdk stacks
 .PHONY: test
 
-deploy: test
+deploy: test ## -- runs the tests and then cdk deploy of this stack
 	@ echo "deploying stack"
 	@ source .venv/bin/activate; cdk deploy 
 

@@ -14,14 +14,14 @@ plugins:
 
 nav:
     - Home: index.md
+    - Config: dotenv.md
+    - Deploy: deploy.md
     - API: api.md
     - Layer: layers.md
-    - Infra: stacks.md
-    - Config: dotenv.md
-    - MakeFile: makefile.md
-    - Reference:
+    - Makefile: makefile.md
+    - Docs: docs.md
+    - Code Reference:
       - Models: refs/models.md
       - Events: refs/events.md
       - Api: refs/api.md
-      - CDK Infra: refs/infra.md
-      - CDK App: refs/app.md
+      - CDK: refs/infra.md

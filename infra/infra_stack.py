@@ -19,7 +19,8 @@ class InfraStack(core.Stack):
         table generate a stream event which is handled by the event handler lambda.
         The event handler lambda converts a dynamodb stream event into a custom event
         and puts that event onto the eventbridge default bus. Dependencies for the
-        lambdas are handled in the lambda_layer. 
+        lambdas are handled in the lambda_layer. A cloudwatch log-group is created to log 
+        any events put to eventbridge by the event lambda. 
 
         Attributes:
             ddb_table (DyanmoDB): dynamodb table with a primary key
