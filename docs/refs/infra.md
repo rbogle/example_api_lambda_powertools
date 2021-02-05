@@ -1,1 +1,1 @@
-::: infra.infra_stack
+::: infra_stack

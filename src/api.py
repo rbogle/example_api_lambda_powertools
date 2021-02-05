@@ -48,7 +48,7 @@ def router(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
 
         # need to catch empty guid for get all, but also create new Model with new guid when post
         has_guid = bool(body.get('guid', None))
-        # use powertools to parse event.body into a Model
+        # use powertools to parse event.body into a Model will create a new guid if none exists
         model: Model = parse(event=body, model=Model)
         
         # POST create new not idempotent

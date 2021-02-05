@@ -21,6 +21,7 @@ nav:
     - MakeFile: makefile.md
     - Reference:
       - Models: refs/models.md
-      - API: refs/api.md
+      - Events: refs/events.md
+      - Api: refs/api.md
       - CDK Infra: refs/infra.md
       - CDK App: refs/app.md

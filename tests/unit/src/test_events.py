@@ -30,5 +30,5 @@ def test_event_from_dynamodb():
     assert model_change_evt.Detail.event_type =="CREATE"
     assert model_change_evt.Detail.model_id =='60a5de7e-17ea-411e-b092-0652646f9d3a'
 
-def test_dynamo_handler():
+def test_dynamo_stream_handler():
     pass

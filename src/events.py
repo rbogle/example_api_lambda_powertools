@@ -17,7 +17,19 @@ eventbridge = None
 
 #decorator logs context info and the full event as json ( default event logging is false)
 @logger.inject_lambda_context(log_event=True)
-def dynamo_handler(in_event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
+def dynamo_stream_handler(in_event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
+    """ This method when registered as a lambda will handle incoming dynamodb stream events
+        from a connected dynamodb. It transforms those events using the ModelChangeEvent model
+        and puts them out to eventbridge as a custom event. This way business logic for change 
+        events are encapsulated in the models package.
+
+    Args:
+        in_event (Dict[str, Any]): the incoming event
+        context (LambdaContext): the context
+
+    Returns:
+        Dict[str, Any]: Response converted to dict, not typically consumed 
+    """
     global eventbridge
     if eventbridge is None:
         eventbridge = boto3.client("events")
