@@ -1,2 +1,3 @@
 mkdocs-material
 mkdocstrings
+aws-lambda-powertools[pydantic]
