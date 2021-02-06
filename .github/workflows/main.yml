@@ -1,21 +1,18 @@
 # workflow to use mkdocs gh-deploy
-name: Publish docs via GitHub Pages
+name: ci
 on:
   push:
     branches:
+      - master
       - main
-
 jobs:
-  build:
-    name: Deploy docs
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main
-        uses: actions/checkout@v2
-
-      - name: Deploy docs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          EXTRA_PACKAGES: "libffi-dev build-base"
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - run: pip install -r requirements.txt
+      - run: mkdocs gh-deploy --force
 
