@@ -3,7 +3,7 @@ This makefile is meant to ease the use of managing dependencies and building the
 
 Running make with no target will give you a list of the available targets and their purpose.
 
-You must also have two environment variables either defined and exported or written in a `.env` file for   
+You must also have two environment variables either defined and exported or written in a `.env` file for
 layer processing to execute correctly. See the [Config](dotenv.md) doc for more details. 
 
 ## Targets in the makefile

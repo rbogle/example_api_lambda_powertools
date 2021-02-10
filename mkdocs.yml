@@ -1,6 +1,14 @@
-site_name:  Example lambda-dynamo-cdk api with powertools
+site_name:  lambda-dynamo-cdk api with powertools
+repo_name: rbogle/crud_api_lambda_powertools
+repo_url: https://github.com/rbogle/crud_api_lambda_powertools
+
 theme:
   name: "material"
+  features:
+    - navigation.tabs
+    - navigation.sections
+  icon:
+    repo: fontawesome/brands/github
 
 plugins:
   - search
