@@ -7,8 +7,11 @@ theme:
   features:
     - navigation.tabs
     - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
   icon:
     repo: fontawesome/brands/github
+    logo: fontawesome/solid/cogs
 
 plugins:
   - search
