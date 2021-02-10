@@ -13,7 +13,7 @@ plugins:
             - sys.path.append("infra")
 
 nav:
-    - Home: index.md
+    - Home: README.md
     - Config: dotenv.md
     - Deploy: deploy.md
     - API: api.md
