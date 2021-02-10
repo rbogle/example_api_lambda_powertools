@@ -1,4 +1,4 @@
-site_name: Basic CRUD lambda API
+site_name:  Example lambda-dynamo-cdk api with powertools
 theme:
   name: "material"
 
