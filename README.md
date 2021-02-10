@@ -1,9 +1,18 @@
 
 #  CRUD Lambda API 
 
-This is a example project for serverless Python based API deployed with CDK.
+This is a example project for an AWS serverless API deployed with CDK and written in python.
 
-It uses lambdas for integration with http api gateway, lambda layers to manage dependencies, dynamodb for persistence, dynamodb streams to generate change events, and cdk to deploy the infrastructure. The lambdas utilize AWS lambda powertools library for a micro-framework. Included is the standard mkdocs static docs generator along with mkdocstrings plugin to generate documentation from the source files. 
+It uses:
+
+- lambdas for integration with http api gateway, [api](/docs/api.md) and [refs/api](docs/refs/api.md)
+- lambda layers to manage dependencies [layers](/docs/layers.md)
+  - including AWS Powertools library as a micro-framework
+- dynamodb for persistence [refs/models](/docs/refs/models.md)
+- dynamodb streams to generate api triggered change events, see [refs/events](/docs/refs/events.md)
+- cdk to deploy the infrastructure, see [deploy](/docs/deploy.md)
+- standard mkdocs static docs generator [docs](/docs/docs.md)
+- mkdocstrings plugin to generate documentation from the source files. 
 
 ## Makefile setup and deployment instructions
 
