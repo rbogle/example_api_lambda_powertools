@@ -1,12 +1,10 @@
 # Makefile
-This makefile is meant to ease the use of managing dependencies and building the layer archive (zip) for deployment.  
-Running make with no target will give you a list of the available targets and their purpose.  
-You must also have two environment variables defined and exported or written in a `.env` file for   
-layer processing to execute correctly. See the [Config](dotenv.md) doc for more details. 
-The environment variables required for layer archive creation are:
+This makefile is meant to ease the use of managing dependencies and building the layer archive (zip) for deployment.
 
-* LAYER_VERSION: semantic versioning suffix for layer archive name, used by make and by cdk  
-* LAYER_NAME: prefix on the layer archive file (zip) used by make and cdk  
+Running make with no target will give you a list of the available targets and their purpose.
+
+You must also have two environment variables either defined and exported or written in a `.env` file for   
+layer processing to execute correctly. See the [Config](dotenv.md) doc for more details. 
 
 ## Targets in the makefile
 * list (or just make) -- list all the targets in this file with a description

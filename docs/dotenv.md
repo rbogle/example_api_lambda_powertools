@@ -1,5 +1,6 @@
 # .env reference
-This project uses a .env file to configure both the infrastructure stacks and the makefile processes it requires the following values to be defined.
+This project uses a .env file to configure both the infrastructure stacks and the makefile targets,  
+it requires the following values to be defined:
 
 - LAYER_VERSION: semantic versioning suffix for layer archive name, used by make and by cdk
 - LAYER_NAME: prefix on the layer archive file (zip) used by make and cdk
